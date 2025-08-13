@@ -25,6 +25,8 @@
     .video iframe,.video video{position:absolute;inset:0;width:100%;height:100%}
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
   </style>
+  <!-- reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js?render=6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi" async defer></script>
 </head>
 <body>
   <div class="wrap">
@@ -42,11 +44,15 @@
       <div class="note"><strong>Uwaga:</strong> ❗️JEŻELI WYŚLESZ SKOPIOWANY SCREEN OD KOGOŚ INNEGO LUB BĘDZIE ON NIE POPRAWNY, NP. NIE WYŚLESZ SCREENÓW WSZYSTKICH POTWIERDZONYCH KROKÓW — WTEDY NIE OTRZYMASZ DOSTĘPU❗️</div>
     </section>
 
+    <form id="myForm">
+      <div class="g-recaptcha" data-sitekey="6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi"></div>
+      <button id="submitBtn" type="button">Wyślij</button>
+    </form>
+
     <div class="grid" style="margin-top:16px">
       <section class="card video">
         <h2 style="margin-top:0;margin-bottom:10px">Wideo z tutorialem</h2>
         <div class="frame">
-          <!-- Możesz podmienić TWÓJ_ID_FILMU na ID filmu z YouTube lub użyć własnego pliku MP4 -->
           <iframe src="https://www.youtube.com/embed/TWÓJ_ID_FILMU" title="Odtwarzacz wideo" frameborder="0" allowfullscreen></iframe>
         </div>
         <p class="subtitle" style="margin-top:10px">Alternatywnie wstaw swój plik MP4: <code>&lt;video controls src="tutorial.mp4"&gt;&lt;/video&gt;</code></p>
@@ -68,7 +74,28 @@
   </div>
 
   <script>
+    // Wyświetlanie roku
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Obsługa przycisku i reCAPTCHA
+    document.getElementById('submitBtn').addEventListener('click', async function() {
+      const token = await grecaptcha.execute('6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi', {action: 'submit'});
+      
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Weryfikacja udana! Możesz kontynuować.");
+        // Tutaj możesz np. wysłać formularz dalej, jeśli masz inne pola:
+        // document.getElementById('myForm').submit();
+      } else {
+        alert("Nie udało się zweryfikować captcha.");
+      }
+    });
   </script>
 </body>
 </html>

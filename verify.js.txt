@@ -1,0 +1,35 @@
+import fetch from "node-fetch";
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ success: false, message: "Method not allowed" });
+  }
+
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ success: false, message: "Token missing" });
+  }
+
+  const secret = "6LcI-6QrAAAAAOEY6f0ibgvfYhbYylwOVARxezb7"; // Twój tajny klucz reCAPTCHA
+  const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`;
+
+  try {
+    const response = await fetch(verificationUrl, { method: "POST" });
+    if (!response.ok) {
+      return res.status(500).json({ success: false, message: "Error contacting Google reCAPTCHA" });
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      return res.status(200).json({ success: true });
+    } else {
+      // Możesz zwrócić dodatkowe info np. data['error-codes'] do debugowania
+      return res.status(400).json({ success: false, message: "Verification failed", errors: data['error-codes'] || [] });
+    }
+  } catch (error) {
+    console.error("Verify API error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
