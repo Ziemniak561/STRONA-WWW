@@ -25,12 +25,8 @@
     .video iframe,.video video{position:absolute;inset:0;width:100%;height:100%}
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
   </style>
-  <!-- Cloudflare Turnstile -->
-<form id="myForm">
-  <div class="cf-turnstile" data-sitekey="0x4AAAAAABrPo9b0-6Niol42"></div>
-  <button id="submitBtn" type="button">Wyślij</button>
-</form>
-
+  <!-- Cloudflare Turnstile script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div class="wrap">
@@ -45,11 +41,11 @@
         <li>ZAREJESTROWAĆ SIĘ NA STRONIE TESTOWEJ ➤ <a href="#">[PRZYKŁAD]</a></li>
         <li>WYSŁAĆ SCREENY Z POTWIERDZENIEM WYKONANIA WSZYSTKICH PUNKTÓW Z PORADNIKA NA NASZ SERWER DISCORD DO KANAŁU: <code>#SCREENY-DOSTĘPU</code></li>
       </ol>
-      <div class="note"><strong>Uwaga:</strong> ❗️JEŻELI WYŚLESZ SKOPIOWANY SCREEN OD KOGOŚ INNEGO LUB BĘDZIE ON NIE POPRAWNY, NP. NIE WYŚLESZ SCREENÓW WSZYSTKICH POTWIERDZONYCH KROKÓW — WTEDY NIE OTRZYMASZ DOSTĘPU❗️</div>
+      <div class="note"><strong>Uwaga:</strong> ❗️JEŻELI WYŚLESZ SKOPIOWANY SCREEN OD KOGOŚ INNEGO LUB BĘDZIE ON NIE POPRAWNY — WTEDY NIE OTRZYMASZ DOSTĘPU❗️</div>
     </section>
 
     <form id="myForm">
-      <div class="cf-turnstile" data-sitekey="0x4AAAAAABrPo9b0-6Niol42"></div>
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAABrPo9b0-6Niol42" data-callback="onTurnstileSuccess"></div>
       <button id="submitBtn" type="button">Wyślij</button>
     </form>
 
@@ -78,28 +74,35 @@
   </div>
 
   <script>
-    // Wyświetlanie roku
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // zmienna globalna do przechowania tokena
+    let turnstileToken = "";
+
+    // callback dla Turnstile
+    function onTurnstileSuccess(token) {
+      turnstileToken = token;
+    }
+
     document.getElementById('submitBtn').addEventListener('click', async function() {
+      if (!turnstileToken) {
+        alert("Proszę potwierdzić, że nie jesteś botem.");
+        return;
+      }
+
       try {
-        const token = document.querySelector('[name="cf-turnstile-response"]').value;
-
-        if (!token) {
-          alert("Proszę potwierdzić, że nie jesteś botem.");
-          return;
-        }
-
         const res = await fetch('/api/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
+          body: JSON.stringify({ token: turnstileToken })
         });
 
         const data = await res.json();
-
         if (data.success) {
           alert("Weryfikacja udana! Możesz kontynuować.");
+          // opcjonalnie reset Turnstile jeśli chcesz ponownie użyć
+          turnstile.reset(); 
+          turnstileToken = "";
         } else {
           alert("Nie udało się zweryfikować captcha.");
         }
