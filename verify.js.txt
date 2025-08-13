@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+iimport fetch from "node-fetch";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -10,13 +10,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: "Token missing" });
   }
 
-  const secret = "6LcI-6QrAAAAAOEY6f0ibgvfYhbYylwOVARxezb7"; // Twój tajny klucz reCAPTCHA
-  const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`;
+  const secret = "0x4AAAAAABrPo30QhorkyuSU4KOz6r1pw7U"; // Twój tajny klucz Turnstile
+  const verificationUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
   try {
-    const response = await fetch(verificationUrl, { method: "POST" });
+    const params = new URLSearchParams();
+    params.append("secret", secret);
+    params.append("response", token);
+
+    const response = await fetch(verificationUrl, {
+      method: "POST",
+      body: params
+    });
+
     if (!response.ok) {
-      return res.status(500).json({ success: false, message: "Error contacting Google reCAPTCHA" });
+      return res.status(500).json({ success: false, message: "Error contacting Turnstile" });
     }
 
     const data = await response.json();
@@ -24,7 +32,6 @@ export default async function handler(req, res) {
     if (data.success) {
       return res.status(200).json({ success: true });
     } else {
-      // Możesz zwrócić dodatkowe info np. data['error-codes'] do debugowania
       return res.status(400).json({ success: false, message: "Verification failed", errors: data['error-codes'] || [] });
     }
   } catch (error) {
@@ -32,4 +39,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
-

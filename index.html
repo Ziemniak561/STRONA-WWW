@@ -25,8 +25,8 @@
     .video iframe,.video video{position:absolute;inset:0;width:100%;height:100%}
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
   </style>
-  <!-- reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js?render=6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi" async defer></script>
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div class="wrap">
@@ -45,7 +45,7 @@
     </section>
 
     <form id="myForm">
-      <div class="g-recaptcha" data-sitekey="6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi"></div>
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAABrPo9b0-6Niol42"></div>
       <button id="submitBtn" type="button">Wyślij</button>
     </form>
 
@@ -77,13 +77,15 @@
     // Wyświetlanie roku
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Obsługa przycisku i reCAPTCHA
     document.getElementById('submitBtn').addEventListener('click', async function() {
       try {
-        // Pobranie tokenu reCAPTCHA
-        const token = await grecaptcha.execute('6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi', {action: 'submit'});
+        const token = document.querySelector('[name="cf-turnstile-response"]').value;
 
-        // Wysłanie tokenu do naszego API
+        if (!token) {
+          alert("Proszę potwierdzić, że nie jesteś botem.");
+          return;
+        }
+
         const res = await fetch('/api/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -94,8 +96,6 @@
 
         if (data.success) {
           alert("Weryfikacja udana! Możesz kontynuować.");
-          // jeśli masz inne pola w formularzu, możesz je wysłać teraz
-          // document.getElementById('myForm').submit();
         } else {
           alert("Nie udało się zweryfikować captcha.");
         }
