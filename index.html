@@ -79,21 +79,29 @@
 
     // Obsługa przycisku i reCAPTCHA
     document.getElementById('submitBtn').addEventListener('click', async function() {
-      const token = await grecaptcha.execute('6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi', {action: 'submit'});
-      
-      const res = await fetch('/api/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
+      try {
+        // Pobranie tokenu reCAPTCHA
+        const token = await grecaptcha.execute('6LcI-6QrAAAAAEIvuf67u11LVx-C_QwNlUycqfxi', {action: 'submit'});
 
-      const data = await res.json();
-      if (data.success) {
-        alert("Weryfikacja udana! Możesz kontynuować.");
-        // Tutaj możesz np. wysłać formularz dalej, jeśli masz inne pola:
-        // document.getElementById('myForm').submit();
-      } else {
-        alert("Nie udało się zweryfikować captcha.");
+        // Wysłanie tokenu do naszego API
+        const res = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert("Weryfikacja udana! Możesz kontynuować.");
+          // jeśli masz inne pola w formularzu, możesz je wysłać teraz
+          // document.getElementById('myForm').submit();
+        } else {
+          alert("Nie udało się zweryfikować captcha.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Błąd serwera lub sieci. Spróbuj ponownie.");
       }
     });
   </script>
