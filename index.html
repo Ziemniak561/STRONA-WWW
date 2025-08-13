@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PORADNIK</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--text:#e5e7eb;--accent:#22d3ee;--accent2:#38bdf8;--ring:rgba(56,189,248,.18);--warn:#f59e0b}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1000px 600px at 10% -20%,rgba(34,211,238,.04),transparent),radial-gradient(800px 500px at 90% 0%,rgba(56,189,248,.03),transparent),var(--bg);color:var(--text)}
+    .wrap{max-width:960px;margin:0 auto;padding:28px}
+    header{text-align:center;margin-bottom:16px}
+    .title{font-size:clamp(28px,4vw,48px);font-weight:800;margin:0;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .subtitle{color:var(--muted);margin-top:8px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid rgba(148,163,184,.08);border-radius:14px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,.25);backdrop-filter:blur(6px)}
+    .grid{display:grid;gap:16px;grid-template-columns:1fr}
+    @media(min-width:900px){.grid{grid-template-columns:1.3fr .9fr}}
+    ol{padding-left:20px;margin:0}
+    ol li{margin:10px 0;line-height:1.5}
+    .note{margin-top:12px;padding:12px;border-radius:10px;border:1px dashed rgba(148,163,184,.14);background:rgba(2,6,23,.35);color:var(--muted);font-size:14px}
+    .links ul{list-style:none;padding:0;margin:0}
+    .links li{margin:8px 0}
+    .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.12);text-decoration:none;color:var(--text)}
+    .btn:hover{box-shadow:0 10px 30px var(--ring);transform:translateY(-2px)}
+    .video .frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:1px solid rgba(148,163,184,.08)}
+    .video iframe,.video video{position:absolute;inset:0;width:100%;height:100%}
+    footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="title">PORADNIK</h1>
+      <p class="subtitle">🥊ABY MÓC OGLĄDAĆ FAME MMA 27 ZA DARMO MUSISZ🥊:</p>
+    </header>
+
+    <section class="card">
+      <ol>
+        <li>ZAINSTALOWAĆ WTYCZKĘ VPN TESTOWĄ Z LINKU ➤ <a href="#">[PRZYKŁAD]</a></li>
+        <li>ZAREJESTROWAĆ SIĘ NA STRONIE TESTOWEJ ➤ <a href="#">[PRZYKŁAD]</a></li>
+        <li>WYSŁAĆ SCREEN Z POTWIERDZENIEM OBU PUNKTÓW NA NASZYM SERWERZE TESTOWYM DO KANAŁU <code>#SCREENY-DOSTĘPU</code></li>
+      </ol>
+      <div class="note"><strong>Uwaga:</strong> ❗️JEŻELI WYŚLESZ SKOPIOWANY SCREEN OD KOGOŚ INNEGO LUB BĘDZIE ON NIE POPRAWNY, NP. NIE WYŚLESZ SCREENÓW WSZYSTKICH POTWIERDZONYCH KROKÓW — WTEDY NIE OTRZYMASZ DOSTĘPU❗️</div>
+    </section>
+
+    <div class="grid" style="margin-top:16px">
+      <section class="card video">
+        <h2 style="margin-top:0;margin-bottom:10px">Wideo z tutorialem</h2>
+        <div class="frame">
+          <!-- Możesz podmienić TWÓJ_ID_FILMU na ID filmu z YouTube lub użyć własnego pliku MP4 -->
+          <iframe src="https://www.youtube.com/embed/TWÓJ_ID_FILMU" title="Odtwarzacz wideo" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <p class="subtitle" style="margin-top:10px">Alternatywnie wstaw swój plik MP4: <code>&lt;video controls src="tutorial.mp4"&gt;&lt;/video&gt;</code></p>
+      </section>
+
+      <aside class="card links">
+        <h2 style="margin-top:0;margin-bottom:10px">Przydatne linki</h2>
+        <ul>
+          <li><a class="btn" href="#" target="_blank" rel="noopener">Wtyczka VPN (przykład)</a></li>
+          <li><a class="btn" href="#" target="_blank" rel="noopener">Strona rejestracji (przykład)</a></li>
+          <li><a class="btn" href="#" target="_blank" rel="noopener">Serwer / Discord (przykład)</a></li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer class="card" style="margin-top:16px">
+      © <span id="year"></span> Poradnik • Szablon testowy
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
